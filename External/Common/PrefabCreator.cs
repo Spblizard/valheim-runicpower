@@ -97,7 +97,6 @@ namespace Common {
 
 		public static Recipe CreateRecipe(string name, string itemId, RecipeConfig recipeConfig) {
 			InitCraftingStations();
-
 			var itemPrefab = ObjectDB.instance.GetItemPrefab(itemId);
 			if (itemPrefab == null) {
 				Debug.LogWarning($"[PrefabCreator] Could not find item prefab ({itemId})");

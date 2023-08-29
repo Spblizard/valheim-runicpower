@@ -155,7 +155,7 @@ namespace RunicPower.Core {
 		}
 
 		public static ItemDrop.ItemData FindAnother(RuneData runeData, bool checkFull) {
-			var inv = invBarGrid.m_inventory;
+			var inv = invBarGrid.GetInventory();
 			var items = inv.GetAllItems();
 
 			foreach (var item in items) {
@@ -177,14 +177,18 @@ namespace RunicPower.Core {
 
 		public static void UpdateExtraTexts() {
 			for (var i = 0; i < slotCount; ++i) {
-				var spell = invBarGrid?.m_inventory?.GetItemAt(i, 0);
-				var data = spell?.GetRuneData();
-				var name = data?.name;
-				var rank = data?.rank ?? 0;
-				var cooldown = 0;
-				var got = (name == null) ? false : RunicPower.activeCooldowns?.TryGetValue(name, out cooldown);
-				if (got != true) cooldown = 0;
-				SetExtraTexts(i, rank, cooldown);
+				try {
+					var spell = invBarGrid?.m_inventory?.GetItemAt(i, 0);
+					var data = spell?.GetRuneData();
+					var name = data?.name;
+					var rank = data?.rank ?? 0;
+					var cooldown = 0;
+					var got = (name == null) ? false : RunicPower.activeCooldowns?.TryGetValue(name, out cooldown);
+					if (got != true) cooldown = 0;
+					SetExtraTexts(i, rank, cooldown);
+				} catch(FieldAccessException exc) {
+					RunicPower.Log("Exception Catch " + exc.Message);
+				}
 			}
 		}
 
@@ -249,8 +253,9 @@ namespace RunicPower.Core {
 			var inv = player?.GetSpellsBarInventory();
 			var invGui = InventoryGui.instance;
 			if (inv == null || invGui == null) return;
-
-			try {
+			
+            try {
+				
 				grid?.UpdateInventory(inv, player, invGui?.m_dragItem);
 
 				for (var i = 0; i < slotCount; ++i) {
@@ -268,6 +273,7 @@ namespace RunicPower.Core {
 						bindingText = bind.GetComponent<Text>();
 						bindingText.enabled = true;
 						bindingText.horizontalOverflow = HorizontalWrapMode.Overflow;
+						bindingText.alignment = TextAnchor.UpperLeft;
 						bindingText.fontSize = 15;
 						mapBindingText[key] = bindingText;
 						// COOLDOWN
@@ -299,6 +305,7 @@ namespace RunicPower.Core {
 			} catch (Exception) {
 
 			}
+			
 		}
 
 		public static void CreateHotkeysBar(Hud hud) {

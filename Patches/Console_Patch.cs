@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace RunicPower {
 
-	[HarmonyPatch(typeof(Console), "InputText")]
-	public static class Console_InputText_Patch {
+	[HarmonyPatch(typeof(Console), "SendInput")]
+	public static class Console_SendInput_Patch {
 
 		public class ConsoleValue {
 			public string value;

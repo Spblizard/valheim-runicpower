@@ -48,6 +48,8 @@ namespace RunicPower.Core {
 			statusEffect.m_category = data.name;
 			statusEffect.m_cooldown = 0f;
 			statusEffect.m_icon = data.itemDrop.m_itemData.m_shared.m_icons[0];
+			statusEffect.NameHash();
+			statusEffect.m_character = caster;
 			return statusEffect;
 		}
 
@@ -68,31 +70,29 @@ namespace RunicPower.Core {
 			return 0;
 		}
 
-		public string GetEffectString() {
-			var buffs = new List<string>();
-			GetEffectStringPart(ref buffs, "hpRegen", GetHealthRegen());
-			GetEffectStringPart(ref buffs, "stRegen", GetStaminaRegen());
-			GetEffectStringPart(ref buffs, "movement", GetMovementBonus());
-			GetEffectStringPart(ref buffs, "stealth", GetStealhiness());
-			GetEffectStringPart(ref buffs, "exposed", GetExpose());
-			GetEffectStringPart(ref buffs, "hpSteal", GetHealthSteal());
+		public string GetEffectStringBuffs() {
+            var buffs = new List<string>();
+            GetEffectStringPart(ref buffs, "hpRegen", GetHealthRegen());
+            GetEffectStringPart(ref buffs, "stRegen", GetStaminaRegen());
+            GetEffectStringPart(ref buffs, "movement", GetMovementBonus());
+            GetEffectStringPart(ref buffs, "stealth", GetStealhiness());
+            GetEffectStringPart(ref buffs, "exposed", GetExpose());
+            GetEffectStringPart(ref buffs, "hpSteal", GetHealthSteal());
 
-			foreach (HitData.DamageType dmgType in dmgTypes) {
-				GetEffectStringPart(ref buffs, "power." + dmgType, GetPower(dmgType));
-				GetEffectStringPart(ref buffs, "resist." + dmgType, GetResist(dmgType));
-			}
+            foreach (HitData.DamageType dmgType in dmgTypes)
+            {
+                GetEffectStringPart(ref buffs, "power." + dmgType, GetPower(dmgType));
+                GetEffectStringPart(ref buffs, "resist." + dmgType, GetResist(dmgType));
+            }
 
-			GetEffectStringPart(ref buffs, "duration", GetDuration());
+            GetEffectStringPart(ref buffs, "duration", GetDuration());
 
-			var parts = new List<string>();
-			parts.Add("RUNICPOWER");
-			parts.Add(data.recipe.item);
-			parts.Add(caster.GetZDOID().ToString());
-			parts.Add(string.Join(";", buffs));
+            var fxstring = string.Join(";", buffs);
 
-
-			var fxstring = string.Join("|", parts);
-			return fxstring;
+            return fxstring;
+        }
+		public string GetStringRuneName() {
+			return data.recipe.item;
 		}
 
 		public void GetEffectStringPart(ref List<string> parts, string key, float value) {
@@ -584,8 +584,11 @@ namespace RunicPower.Core {
 				hitDamage.m_damage.m_lightning = GetDamage(HitData.DamageType.Lightning);
 				hitDamage.m_damage.m_poison = GetDamage(HitData.DamageType.Poison);
 				hitDamage.m_damage.m_spirit = GetDamage(HitData.DamageType.Spirit);
-				hitDamage.m_statusEffect = "runicDamage";
-				target.Damage(hitDamage);
+				string tmp = "runicDamage";
+				hitDamage.m_statusEffectHash = tmp.GetStableHashCode();
+				RunicPower.Log("nameHash " + tmp.GetStableHashCode());
+                RunicPower.Log("player " + caster.m_name);
+                target.Damage(hitDamage);
 			}
 
 			// ===== APPLYING ELEMENTAL EFFECTS =====================
@@ -647,10 +650,10 @@ namespace RunicPower.Core {
 			// ===== ADDING AS EFFFECT ======================================
 
 			// if there is a duration, it means it'a buff. So let's apply it to targets
+			
 			if (data.effect.duration > 0) {
-				var fxString = GetEffectString();
-				target.m_seman.AddStatusEffect(fxString, true);
-			}
+				target.m_seman.AddRunicEffect(GetStringRuneName(), caster, GetEffectStringBuffs(), true);
+			}	
 		}
 
 		public void ApplyEffectOnSeman(SEMan seman) {

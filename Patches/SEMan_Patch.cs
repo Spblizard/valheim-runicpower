@@ -18,21 +18,6 @@ namespace RunicPower.Patches {
 		}
 	}
 
-	[HarmonyPatch(typeof(SEMan), "Internal_AddStatusEffect")]
-	public static class Character_Internal_AddStatusEffect_Patch {
-		static bool Prefix(SEMan __instance, string name, bool resetTime, int itemLevel, float skillLevel) {
-			var parts = name.Split('|');
-			if (parts[0] != "RUNICPOWER") return true;
-
-			var effectName = parts[1];
-			var effectCaster = Player.GetAllPlayers().Find(p => p.GetZDOID().ToString() == parts[2]);
-			var effectBuffs = parts[3];
-			__instance.AddRunicEffect(effectName, effectCaster, effectBuffs, true);
-
-			return false;
-		}
-	}
-
 	[HarmonyPatch(typeof(SEMan), "AddStatusEffect", typeof(StatusEffect), typeof(bool), typeof(int), typeof(float))]
 	public static class SEMan_AddStatusEffect_Patch {
 		static void Postfix(SEMan __instance, StatusEffect statusEffect, bool resetTime, int itemLevel, float skillLevel,  ref StatusEffect __result) {

@@ -129,6 +129,12 @@ using UnityEngine.UI;
  * - Mistlands fix!
 */
 
+/*
+ * [2.2.1]
+ * - Hildir's requests fix
+ * - fix key name to slot
+ */
+
 
 // TODO: make cooldowns appear on the inventory itself.
 // TODO: INTEGRATION? equip wheel considering runes as consumables (which they are)
@@ -136,7 +142,7 @@ using UnityEngine.UI;
 // MAYBE: change how casting works. Instead of consuming runes, use of kind of MANA resource.
 
 namespace RunicPower {
-	[BepInPlugin("fiote.mods.runicpower", "RunicPower", "2.2.0")]
+	[BepInPlugin("fiote.mods.runicpower", "RunicPower", "2.2.1")]
 
 	public class RunicPower : BaseUnityPlugin {
 		// core stuff
@@ -296,7 +302,7 @@ namespace RunicPower {
 		}
 
 		private void OnDestroy() {
-			_harmony?.UnpatchAll();
+			_harmony?.UnpatchSelf();
 			foreach (var rune in runesData) Destroy(rune.prefab);
 			UnsetMostThings();
 			runesData.Clear();
@@ -304,11 +310,10 @@ namespace RunicPower {
 
 		public static void TryRegisterPrefabs(ZNetScene zNetScene) {
 			if (zNetScene == null) return;
-			foreach (var rune in runesData) zNetScene.m_prefabs.Add(rune.prefab);
+			foreach (var rune in runesData) zNetScene.m_prefabs.Add(rune.prefab.gameObject);
 		}
 
-		public static void TryRegisterItems() {
-			Log("TryRegisterItems()");
+		public static void TryRegisterItems() { 
 			foreach (var data in runesData) {
 				data.itemDrop = data.prefab.GetComponent<ItemDrop>();
 				if (data.itemDrop == null) {
@@ -316,17 +321,17 @@ namespace RunicPower {
 					continue;
 				}
 				if (ObjectDB.instance.GetItemPrefab(data.prefab.name.GetStableHashCode()) != null) {
-					// Log("Failed to register item " + data.name + ". Prefab already exists.");
+					Log("Failed to register item " + data.name + ". Prefab already exists.");
 					continue;
 				}
 				var itemDrop = data.itemDrop;
 				itemDrop.SetRuneData(data);
 				ObjectDB.instance.m_items.Add(data.prefab);
 			}
+			ObjectDB.instance.UpdateItemHashes();
 		}
 
 		public static void TryRegisterRecipes() {
-			Log("TryRegisterRecipes()");
 			if (ObjectDB.instance == null) return;
 
 			var wrongTime = (ObjectDB.instance?.m_items?.Count == 0);
@@ -488,6 +493,7 @@ namespace RunicPower {
 		}
 
 		public static Rune CreateRunicEffect(string name, Player caster, string dsbuffs) {
+			RunicPower.Log("CreateRunicEffect " + name + " " +  dsbuffs);
 			var data = runesData.Find(r => r.recipe.item == name);
 			if (data == null) return null;
 

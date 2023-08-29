@@ -92,7 +92,7 @@ namespace RunicPower.Patches {
 			var effs = (currentCraftingStation != null) ? currentCraftingStation.m_craftItemDoneEffects : __instance.m_craftItemDoneEffects;
 			effs.Create(player.transform.position, Quaternion.identity);
 
-			Game.instance.GetPlayerProfile().m_playerStats.m_crafts++;
+			Game.instance.GetPlayerProfile().IncrementStat(PlayerStatType.Crafts);
 			Gogan.LogEvent("Game", "Crafted", __instance.m_craftRecipe.m_item.m_itemData.m_shared.m_name, qualityLevel);
 
 			return false;
