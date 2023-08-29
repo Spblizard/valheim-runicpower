@@ -454,7 +454,7 @@ namespace RunicPower {
 		public static ConfigEntry<int> configRanksOffsetY;
 
 		private void SetupConfig() {
-			Config.Bind("General", "NexusID", 840, "NexusMods ID for updates.");
+			Config.Bind("General", "NexusID", 2494, "NexusMods ID for updates.");
 
 			// CASTING
 			configCastingMessage = Config.Bind("Casting", "Message", CastingMessage.NORMAL, "Define where the casting message should appear.");
