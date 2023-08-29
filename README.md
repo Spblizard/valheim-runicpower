@@ -1,4 +1,4 @@
-https://www.nexusmods.com/valheim/mods/840
+https://www.nexusmods.com/valheim/mods/2494
 
 # CASTING
 
