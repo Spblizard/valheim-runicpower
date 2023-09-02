@@ -135,6 +135,11 @@ using UnityEngine.UI;
  * - fix key name to slot
  */
 
+/*
+ * [2.2.2]
+ * - fix offset hotkeys into inventory
+ */
+
 
 // TODO: make cooldowns appear on the inventory itself.
 // TODO: INTEGRATION? equip wheel considering runes as consumables (which they are)
@@ -142,7 +147,7 @@ using UnityEngine.UI;
 // MAYBE: change how casting works. Instead of consuming runes, use of kind of MANA resource.
 
 namespace RunicPower {
-	[BepInPlugin("fiote.mods.runicpower", "RunicPower", "2.2.1")]
+	[BepInPlugin("fiote.mods.runicpower", "RunicPower", "2.2.2")]
 
 	public class RunicPower : BaseUnityPlugin {
 		// core stuff

@@ -421,7 +421,7 @@ namespace RunicPower.Core {
 					var position = new Vector2(1000, 103);
 					goRect.anchoredPosition = position;
 				} else {
-					var cfgScale = RunicPower.configHotkeysScale.Value / 100f;
+                    var cfgScale = RunicPower.configHotkeysScale.Value / 100f;
 					var scale = new Vector3(cfgScale, cfgScale, cfgScale);
 					goRect.localScale = scale;
 
@@ -429,8 +429,8 @@ namespace RunicPower.Core {
 					goRect.anchorMax = new Vector2(0.5f, 0f);
 					goRect.pivot = new Vector2(0.5f, 0f);
 
-					var sizex = 643f;
-					var sizey = 88f;
+                    var sizex = 643f - RunicPower.configHotkeysOffsetX.Value;
+					var sizey = 88f - RunicPower.configHotkeysOffsetY.Value;
 					var guiscale = GuiScaler.m_largeGuiScale;
 
 					var x = GuiScaler.m_minWidth / guiscale / 2 - sizex / 2;
